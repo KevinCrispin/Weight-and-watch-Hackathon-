@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Game</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 100px;
+    }
+    
+    #clickBtn {
+      display: none;
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #clickBtn:hover {
+      background-color: #3e8e41;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Student Game</h1>
+  <p id="message">Wait for the button to appear...</p>
+  <button id="clickBtn">CLICK ME!</button>
+  <p id="score">Score: 0</p>
+
+  <script>
+    let score = 0;
+    const button = document.getElementById("clickBtn");
+    const message = document.getElementById("message");
+    const scoreDisplay = document.getElementById("score");
+
+    function showButton() {
+      // Wait a random time before showing button (1–3 seconds)
+      const randomDelay = Math.random() * 2000 + 1000;
+
+      message.textContent = "Wait for it...";
+      button.style.display = "none";
+
+      setTimeout(() => {
+        button.style.display = "inline-block";
+        message.textContent = "Click the button now!";
+        startTime = new Date().getTime();
+      }, randomDelay);
+    }
+
+    // When user clicks the button
+    button.addEventListener("click", () => {
+      const reactionTime = (new Date().getTime() - startTime) / 1000;
+      score++;
+      scoreDisplay.textContent = `Score: ${score} (Reaction: ${reactionTime.toFixed(2)}s)`;
+      showButton(); // start next round
+    });
+
+    // Check backend light every 2 sec
+    async function checkLight() {
+      const response = await fetch('http://127.0.0.1:5000/status');
+      const data = await response.json();
+      if (!data.game_on){
+        window.location.href = "index.html"; // return when light changes
+      }
+    }
+
+    setInterval(checkLight, 2000);
+    showButton();
+  </script>
+</body>
+</html>

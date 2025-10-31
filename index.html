@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Traffic Light</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: black;
+      padding: 40px;
+      color: white;
+      zoom: 0.70; 
+    }
+
+    .traffic-light {
+      width: 100px;
+      height: 260px;
+      background-color: #222;
+      border-radius: 30px;
+      margin: 30px auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .light {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin: 0 auto;
+      background-color: #555;
+      box-shadow: 0 0 10px #000 inset;
+    }
+
+    .red.on {
+      background-color: red;
+      box-shadow: 0 0 20px red;
+    }
+
+    .yellow.on {
+      background-color: yellow;
+      box-shadow: 0 0 20px yellow;
+    }
+
+    .green.on {
+      background-color: limegreen;
+      box-shadow: 0 0 20px limegreen;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* 🚑 Ambulance status styles */
+    #ambulance {
+      font-size: 22px;
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 12px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      transition: 0.5s ease;
+    }
+
+    /* When ambulance detected */
+    .ambulance-on {
+      background-color: crimson;
+      box-shadow: 0 0 20px red;
+      color: white;
+      animation: blink 1s infinite alternate;
+    }
+
+    /* When no ambulance */
+    .ambulance-off {
+      background-color: #222;
+      color: #aaa;
+      box-shadow: 0 0 10px #000 inset;
+    }
+
+    /* Blinking animation for alert */
+    @keyframes blink {
+      from { opacity: 1; }
+      to { opacity: 0.5; }
+    }
+
+  </style>
+</head>
+<body>
+  <h1>🚦 Smart Traffic Light System</h1>
+
+  <div class="traffic-light">
+    <div id="redLight" class="light red"></div>
+    <div id="yellowLight" class="light yellow"></div>
+    <div id="greenLight" class="light green"></div>
+  </div>
+
+  <p id="ambulance">Ambulance: </p>
+
+  <div id="gameButtons" class="hidden">
+    <h2>🎮 Play a Game While You Wait!</h2>
+    <button class="btn" onclick="window.location.href='student_game.html'">Student Game</button>
+    <button class="btn" onclick="window.location.href='teacher_game.html'">Teacher Game</button>
+  </div>
+
+  <script>
+    async function fetchStatus() {
+      const response = await fetch('http://127.0.0.1:5000/status');
+      const data = await response.json();
+
+      const ambulanceEl = document.getElementById('ambulance');
+      ambulanceEl.textContent = "Ambulance: " + (data.ambulance ? "Yes" : "No");
+      ambulanceEl.className = data.ambulance ? "ambulance-on" : "ambulance-off";
+
+      // Update light colors
+      document.getElementById('redLight').classList.toggle('on', data.light === 'red');
+      document.getElementById('yellowLight').classList.toggle('on', data.light === 'yellow');
+      document.getElementById('greenLight').classList.toggle('on', data.light === 'green');
+
+      // Show or hide game buttons
+      const gameDiv = document.getElementById('gameButtons');
+      if (data.game_on) {
+        gameDiv.classList.remove('hidden');
+      } else {
+        gameDiv.classList.add('hidden');
+      }
+    }
+
+    fetchStatus();
+    setInterval(fetchStatus, 2000);
+  </script>
+</body>
+</html>
