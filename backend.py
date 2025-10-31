@@ -18,7 +18,6 @@ def update_traffic():
         traffic_data["ambulance"] = random.random() < 0.3
 
         if traffic_data["ambulance"]:
-            traffic_data["light"] = "green"
             traffic_data["game_on"] = False
         else:
             if traffic_data["density"] >= 70:
