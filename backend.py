@@ -27,7 +27,7 @@ def update_traffic():
             else:
                 traffic_data["light"] = "green"
             traffic_data["game_on"] = traffic_data["light"] == "red"
-        time.sleep(1)
+        time.sleep(10)
 
 threading.Thread(target=update_traffic, daemon=True).start()
 
@@ -46,3 +46,4 @@ def teacher_game():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
